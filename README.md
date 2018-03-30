@@ -8,7 +8,7 @@
 		.	p point	 	(.)
 		e	e exponent 	(e)
 
-	Rules							All correct variants
+	Rules                           All correct variants
 	   8 (n)	e8 (n)  e-8 (sn)	(   8,   8e8,    8e-8 )
 	  -8 (sn)	e8 (n)	e-8 (sn)	(  -8,   -8e8,  -8e-8 )
 
