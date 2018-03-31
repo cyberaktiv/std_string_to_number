@@ -9,27 +9,25 @@ std::string trimStr(const std::string &s)
 	return (left == std::string::npos) ? "" :
 	       s.substr(left, s.find_last_not_of(" ") - left + 1);
 }
-inline bool isNormNum(const char *num)
+inline bool isToken(const char *t, bool exp = false)
 {
-	return (
-	           !strcmp(num, "n") ||
-	           !strcmp(num, "sn") ||
-	           !strcmp(num, "pn") ||
-	           !strcmp(num, "np") ||
-	           !strcmp(num, "snp") ||
-	           !strcmp(num, "spn") ||
-	           !strcmp(num, "npn") ||
-	           !strcmp(num, "snpn")
+	return (exp) ?
+	       (
+	           !strcmp(t, "n") ||
+	           !strcmp(t, "sn")
+	       ) :
+	       (
+	           !strcmp(t, "n") ||
+	           !strcmp(t, "sn") ||
+	           !strcmp(t, "pn") ||
+	           !strcmp(t, "np") ||
+	           !strcmp(t, "snp") ||
+	           !strcmp(t, "spn") ||
+	           !strcmp(t, "npn") ||
+	           !strcmp(t, "snpn")
 	       );
 }
-inline bool isNormExp(const char *exp)
-{
-	return (
-	           !strcmp(exp, "n") ||
-	           !strcmp(exp, "sn")
-	       );
-}
-bool readStr(const std::string &s, char *tokens, int size, bool exp = false)
+bool readStr(const std::string &s, char *token, int size, bool exp = false)
 {
 	int cnt = 0;
 	bool prevNum = false;
@@ -46,37 +44,34 @@ bool readStr(const std::string &s, char *tokens, int size, bool exp = false)
 			if (prevNum) // read number completely
 				break;
 			prevNum = true;
-			tokens[cnt++] = 'n';
+			token[cnt++] = 'n';
 			break;
 		case '-':
 		case '+':
 			prevNum = false;
-			tokens[cnt++] = 's';
+			token[cnt++] = 's';
 			break;
 		case '.':
 			prevNum = false;
-			tokens[cnt++] = 'p';
+			token[cnt++] = 'p';
 			break;
 		case 'e':
-			if (exp || !isNormNum(tokens) || i == s.size() - 1)
+			if (exp || !isToken(token) || i == s.size() - 1)
 				return false;
-			memset(tokens, 0, size + 1); // clear buffer
-			return readStr(s.substr(i + 1), tokens, size, true);
+			memset(token, 0, size + 1); // clear buffer
+			return readStr(s.substr(i + 1), token, size, true);
 		default:
 			return false;
 		}
 	}
-	if (cnt == 0)
+	if (cnt == 0) // empty string
 		return false;
 
-	if (exp)
-		return isNormExp(tokens);
-
-	return isNormNum(tokens);
+	return isToken(token, exp);
 }
 bool isNumber(const std::string &s)
 {
 	const int buffSize = 6;
-	char tokens[buffSize] = {};
-	return readStr(trimStr(s), tokens, buffSize - 1);
+	char token[buffSize] = {};
+	return readStr(trimStr(s), token, buffSize - 1);
 }
